@@ -15,6 +15,7 @@ class QAudioSource;
 
 #include "WaveformProvider.h"
 #include "models/RecordingListModel.h"
+#include "models/AudioInputDeviceModel.h"
 
 /**
  * @brief Core audio recorder engine wrapping Qt6 Multimedia APIs.
@@ -44,6 +45,10 @@ class AudioRecorderEngine : public QObject
     Q_PROPERTY(int outputFormat READ outputFormat WRITE setOutputFormat NOTIFY outputFormatChanged)
     Q_PROPERTY(QString outputDirectory READ outputDirectory WRITE setOutputDirectory NOTIFY outputDirectoryChanged)
     Q_PROPERTY(int maxDuration READ maxDuration WRITE setMaxDuration NOTIFY maxDurationChanged)
+
+    // Audio Input Device
+    Q_PROPERTY(AudioInputDeviceModel* inputDevices READ inputDevices CONSTANT)
+    Q_PROPERTY(int currentInputDeviceIndex READ currentInputDeviceIndex WRITE setCurrentInputDeviceIndex NOTIFY currentInputDeviceIndexChanged)
 
     // Sub-components
     Q_PROPERTY(WaveformProvider* waveform READ waveform CONSTANT)
@@ -79,12 +84,15 @@ public:
     qint64 playbackDuration() const;
     WaveformProvider* waveform() const;
     RecordingListModel* recordings() const;
+    AudioInputDeviceModel* inputDevices() const;
+    int currentInputDeviceIndex() const;
     QString lastError() const;
 
     // Setters
     void setOutputFormat(int format);
     void setOutputDirectory(const QString &dir);
     void setMaxDuration(int seconds);
+    void setCurrentInputDeviceIndex(int index);
 
     // Recording control (callable from QML)
     Q_INVOKABLE void startRecording();
@@ -112,6 +120,7 @@ signals:
     void maxDurationChanged();
     void playbackPositionChanged();
     void playbackDurationChanged();
+    void currentInputDeviceIndexChanged();
     void errorOccurred(const QString &message);
     void recordingSaved(const QString &filePath);
 
@@ -133,11 +142,6 @@ private:
      */
     QString generateOutputPath() const;
 
-    /**
-     * @brief Calculate RMS level from raw audio buffer data.
-     */
-    void processAudioBuffer();
-
     // Recording components
     QMediaCaptureSession *m_captureSession;
     QMediaRecorder *m_recorder;
@@ -154,6 +158,7 @@ private:
     // Sub-components
     WaveformProvider *m_waveform;
     RecordingListModel *m_recordings;
+    AudioInputDeviceModel *m_inputDevices;
 
     // Timer
     QTimer m_timer;
@@ -163,6 +168,7 @@ private:
     OutputFormat m_outputFormat{FormatWAV};
     QString m_outputDirectory;
     int m_maxDuration{0}; // seconds, 0 = unlimited
+    int m_currentInputDeviceIndex{-1};
     QString m_lastError;
 
     // Current recording path

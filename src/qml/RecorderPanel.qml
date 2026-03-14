@@ -136,6 +136,92 @@ Item {
             // ======== Spacer ========
             Item { Layout.fillHeight: true }
 
+            // ======== Input Device Selector ========
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.maximumWidth: 600
+                Layout.alignment: Qt.AlignHCenter
+                spacing: 8
+
+                Image {
+                    source: "qrc:/AeroApp/resources/icons/mic.svg"
+                    sourceSize: Qt.size(14, 14)
+                    opacity: 0.5
+                }
+
+                Text {
+                    text: qsTr("Input:")
+                    font.pixelSize: 12
+                    color: panelRoot.textMutedColor
+                }
+
+                ComboBox {
+                    id: deviceCombo
+                    Layout.fillWidth: true
+                    model: recorderEngine.inputDevices
+                    textRole: "deviceName"
+                    currentIndex: recorderEngine.currentInputDeviceIndex
+                    
+                    onActivated: (index) => {
+                        recorderEngine.currentInputDeviceIndex = index
+                    }
+
+                    background: Rectangle {
+                        color: panelRoot.surfaceLightColor
+                        border.color: panelRoot.dividerColor
+                        border.width: 1
+                        radius: 6
+                    }
+                    contentItem: Text {
+                        text: deviceCombo.displayText
+                        color: panelRoot.textColor
+                        font.pixelSize: 12
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                        leftPadding: 8
+                        rightPadding: 24
+                    }
+                    indicator: Text {
+                        x: deviceCombo.width - width - 8
+                        y: (deviceCombo.height - height) / 2
+                        text: "▼"
+                        color: panelRoot.textMutedColor
+                        font.pixelSize: 10
+                    }
+                    popup: Popup {
+                        y: deviceCombo.height - 1
+                        width: deviceCombo.width
+                        implicitHeight: contentItem.implicitHeight
+                        padding: 1
+                        contentItem: ListView {
+                            clip: true
+                            implicitHeight: contentHeight
+                            model: deviceCombo.popup.visible ? deviceCombo.delegateModel : null
+                            currentIndex: deviceCombo.highlightedIndex
+                            ScrollIndicator.vertical: ScrollIndicator { }
+                        }
+                        background: Rectangle {
+                            color: panelRoot.surfaceColor
+                            border.color: panelRoot.dividerColor
+                            radius: 6
+                        }
+                    }
+                    delegate: ItemDelegate {
+                        width: deviceCombo.width
+                        contentItem: Text {
+                            text: model.deviceName
+                            color: highlighted ? panelRoot.accentLightColor : panelRoot.textColor
+                            font.pixelSize: 12
+                            elide: Text.ElideRight
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        background: Rectangle {
+                            color: highlighted ? panelRoot.surfaceHoverColor : "transparent"
+                        }
+                    }
+                }
+            }
+
             // ======== Bottom Controls ========
             Rectangle {
                 Layout.fillWidth: true

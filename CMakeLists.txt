@@ -13,24 +13,17 @@ find_package(Qt6 REQUIRED COMPONENTS
     Multimedia
 )
 
-set(SOURCES
+set(aero_SOURCES
     src/main.cpp
-    src/engine/AudioRecorderEngine.cpp
-    src/engine/WaveformProvider.cpp
-    src/models/RecordingInfo.cpp
-    src/models/RecordingListModel.cpp
-)
-
-set(HEADERS
-    src/engine/AudioRecorderEngine.h
-    src/engine/WaveformProvider.h
-    src/models/RecordingInfo.h
-    src/models/RecordingListModel.h
+    src/models/RecordingInfo.h src/models/RecordingInfo.cpp
+    src/models/RecordingListModel.h src/models/RecordingListModel.cpp
+    src/models/AudioInputDeviceModel.h src/models/AudioInputDeviceModel.cpp
+    src/engine/WaveformProvider.h src/engine/WaveformProvider.cpp
+    src/engine/AudioRecorderEngine.h src/engine/AudioRecorderEngine.cpp
 )
 
 qt_add_executable(${PROJECT_NAME}
-    ${SOURCES}
-    ${HEADERS}
+    ${aero_SOURCES}
 )
 
 qt_add_qml_module(${PROJECT_NAME}

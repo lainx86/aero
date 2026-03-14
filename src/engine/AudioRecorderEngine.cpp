@@ -63,7 +63,15 @@ AudioRecorderEngine::AudioRecorderEngine(QObject *parent)
     , m_audioOutput(new QAudioOutput(this))
     , m_waveform(new WaveformProvider(this))
     , m_recordings(new RecordingListModel(this))
+    , m_inputDevices(new AudioInputDeviceModel(this))
 {
+    // Initialize input device index and set the device
+    m_currentInputDeviceIndex = m_inputDevices->defaultDeviceIndex();
+    QAudioDevice device = m_inputDevices->deviceAt(m_currentInputDeviceIndex);
+    if (!device.isNull()) {
+        m_audioInput->setDevice(device);
+    }
+
     // Setup capture session for recording
     m_captureSession->setAudioInput(m_audioInput);
     m_captureSession->setRecorder(m_recorder);
@@ -76,7 +84,7 @@ AudioRecorderEngine::AudioRecorderEngine(QObject *parent)
     monitorFormat.setChannelCount(1);
     monitorFormat.setSampleFormat(QAudioFormat::Int16);
 
-    auto defaultDevice = QMediaDevices::defaultAudioInput();
+    auto defaultDevice = device.isNull() ? QMediaDevices::defaultAudioInput() : device;
     m_monitorSource = new QAudioSource(defaultDevice, monitorFormat, this);
 
     // Setup playback
@@ -189,6 +197,16 @@ RecordingListModel* AudioRecorderEngine::recordings() const
     return m_recordings;
 }
 
+AudioInputDeviceModel* AudioRecorderEngine::inputDevices() const
+{
+    return m_inputDevices;
+}
+
+int AudioRecorderEngine::currentInputDeviceIndex() const
+{
+    return m_currentInputDeviceIndex;
+}
+
 QString AudioRecorderEngine::lastError() const
 {
     return m_lastError;
@@ -230,6 +248,49 @@ void AudioRecorderEngine::setMaxDuration(int seconds)
 
     m_maxDuration = qMax(0, seconds);
     emit maxDurationChanged();
+}
+
+void AudioRecorderEngine::setCurrentInputDeviceIndex(int index)
+{
+    if (m_currentInputDeviceIndex == index || index < 0 || index >= m_inputDevices->count())
+        return;
+
+    m_currentInputDeviceIndex = index;
+    QAudioDevice device = m_inputDevices->deviceAt(index);
+
+    // Stop current recording/monitoring if active
+    bool wasRecording = isRecording();
+    bool wasPaused = isPaused();
+    if (wasRecording || wasPaused) {
+        m_recorder->stop();
+        m_monitorSource->stop();
+        m_timer.stop();
+    }
+
+    // Update the audio input device for QMediaRecorder
+    m_audioInput->setDevice(device);
+
+    // Recreate monitor source for the new device
+    if (m_monitorSource) {
+        delete m_monitorSource;
+    }
+    QAudioFormat monitorFormat;
+    monitorFormat.setSampleRate(16000);
+    monitorFormat.setChannelCount(1);
+    monitorFormat.setSampleFormat(QAudioFormat::Int16);
+    m_monitorSource = new QAudioSource(device, monitorFormat, this);
+
+    emit currentInputDeviceIndexChanged();
+
+    // Resume recording if it was active
+    if (wasRecording) {
+        m_monitorSource->start(m_levelMonitor);
+        m_recorder->record();
+        m_timer.start();
+    } else if (wasPaused) {
+        // Technically can't seamlessly resume a paused recorder after device change
+        // but we'll try to leave it stopped or emit a state change appropriately.
+    }
 }
 
 // ======== Recording Control ========
