@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.github.lainx86.aero</id>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Aero</name>
+  <summary>A modern audio recorder with real-time visualization</summary>
+
+  <description>
+    <p>
+      Aero is a sleek desktop audio recorder built with C++ and Qt6.
+      Record from any microphone in WAV, MP3, or OGG format with real-time
+      waveform and VU meter visualization.
+    </p>
+    <p>Features include:</p>
+    <ul>
+      <li>Record audio in WAV, MP3, or OGG format</li>
+      <li>Real-time waveform and VU meter visualization</li>
+      <li>Select audio input device (external microphones supported)</li>
+      <li>Recording list with playback, rename, and delete</li>
+      <li>Optional max-duration auto-stop timer</li>
+      <li>Modern dark-themed UI</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">aero.desktop</launchable>
+
+  <url type="homepage">https://github.com/lainx86/aero</url>
+  <url type="bugtracker">https://github.com/lainx86/aero/issues</url>
+
+  <developer id="com.github.lainx86">
+    <name>lainx86</name>
+  </developer>
+
+  <provides>
+    <binary>aero</binary>
+  </provides>
+
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="1.0.0" date="2026-03-15">
+      <description>
+        <p>Initial release with recording, playback, waveform visualization, and input device selection.</p>
+      </description>
+    </release>
+  </releases>
+</component>

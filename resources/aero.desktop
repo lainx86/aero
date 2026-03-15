@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Aero
+GenericName=Audio Recorder
+Comment=Record audio from your microphone with a modern UI
+Exec=aero
+Icon=aero
+Terminal=false
+Type=Application
+Categories=AudioVideo;Audio;Recorder;
+Keywords=audio;recorder;microphone;sound;wav;mp3;ogg;
+StartupNotify=true
+StartupWMClass=aero

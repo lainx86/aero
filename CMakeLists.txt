@@ -63,8 +63,27 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/src/models
 )
 
+include(GNUInstallDirs)
+
+# Install binary
 install(TARGETS ${PROJECT_NAME}
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+# Install desktop entry
+install(FILES resources/aero.desktop
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
+)
+
+# Install AppStream metadata
+install(FILES resources/com.github.lainx86.aero.metainfo.xml
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo
+)
+
+# Install icons
+install(FILES resources/icons/aero.svg
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps
+)
+install(FILES resources/icons/aero.png
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/256x256/apps
 )
