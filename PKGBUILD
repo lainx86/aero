@@ -20,7 +20,7 @@ makedepends=(
 provides=("${_pkgname}")
 conflicts=("${_pkgname}")
 source=("${pkgname}-${pkgver}.tar.gz::https://github.com/lainx86/${_pkgname}/archive/refs/tags/v${pkgver}.tar.gz")
-sha256sums=('SKIP')
+sha256sums=('054e4d3de9a36aee6574bd9fac3713660d9fef37203ebf86521d07114aa2c6d6')
 
 build() {
     cd "${_pkgname}-${pkgver}"
