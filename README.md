@@ -5,6 +5,7 @@ A modern audio recorder desktop application built with C++23 and Qt 6.
 ## Features
 
 - Record audio from microphone in WAV, MP3, or OGG format
+- Select active audio input device dynamically
 - Real-time waveform visualization during recording
 - VU meter with color-coded level display
 - Recording timer with optional max-duration auto-stop
@@ -12,7 +13,19 @@ A modern audio recorder desktop application built with C++23 and Qt 6.
 - Automatic timestamp-based file naming
 - Dark theme UI consistent with the amp++ music player
 
-## Dependencies
+## Installation
+
+### Arch Linux (AUR)
+
+Aero is available on the Arch User Repository (AUR) as `aero-audio`. You can install it using an AUR helper like `yay` or `paru`:
+
+```bash
+yay -S aero-audio
+```
+
+## Build from Source
+
+### Dependencies
 
 Install the required packages on Arch Linux:
 
@@ -20,18 +33,20 @@ Install the required packages on Arch Linux:
 sudo pacman -S qt6-base qt6-declarative qt6-multimedia qt6-multimedia-ffmpeg cmake gcc
 ```
 
-## Build
+### Build
 
 ```bash
 mkdir -p build && cd build
-cmake ..
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr
 make -j$(nproc)
+sudo make install
 ```
 
 ## Run
 
+If installed via AUR or `make install`:
 ```bash
-./build/aero
+aero
 ```
 
 Recordings are saved to `~/Music/aero/` by default.
@@ -45,6 +60,7 @@ src/
     AudioRecorderEngine.h/cpp Audio recording and playback engine
     WaveformProvider.h/cpp    Real-time audio level data provider
   models/
+    AudioInputDeviceModel.h/cpp List model for audio device selection
     RecordingInfo.h/cpp       Recording metadata data structure
     RecordingListModel.h/cpp  List model for QML recordings view
   qml/
@@ -55,7 +71,10 @@ src/
     VUMeter.qml               Audio level meter
     RecordButton.qml          Animated record/stop button
 resources/
-  icons/                      SVG icons
+  aero.desktop                Desktop entry file
+  com.github.lainx86...       AppStream metadata
+  icons/                      SVG and PNG app icons
+PKGBUILD                      AUR build script
 ```
 
 ## Keyboard Shortcuts
